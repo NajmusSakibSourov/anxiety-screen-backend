@@ -1,7 +1,26 @@
 from http.server import BaseHTTPRequestHandler
 import json
+import os
 
 class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        # Serve the HTML form for GET requests
+        try:
+            # Read the HTML file
+            html_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'index.html')
+            with open(html_path, 'r', encoding='utf-8') as f:
+                html_content = f.read()
+            
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/html; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(html_content.encode('utf-8'))
+        except Exception as e:
+            self.send_response(500)
+            self.send_header('Content-Type', 'text/plain')
+            self.end_headers()
+            self.wfile.write(f"Error loading page: {str(e)}".encode('utf-8'))
+    
     def do_OPTIONS(self):
         # Handle CORS preflight
         self.send_response(204)
