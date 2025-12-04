@@ -1,4 +1,1 @@
 flask==3.*
-numpy==1.*
-scikit-learn==1.*
-pandas==2.*
