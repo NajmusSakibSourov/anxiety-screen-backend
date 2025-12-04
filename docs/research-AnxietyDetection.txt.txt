@@ -1,0 +1,49 @@
+--- AI-Powered Web App for Detecting and Supporting Anxiety in Students: Research Summary ---
+
+**Project Overview:** Developing a web-based Machine Learning platform to detect and support anxiety.
+
+**Q1: What is the core problem this project solves?**
+**Answer:** The project addresses the problem of limited access to mental health support and lack of mental health awareness among students in rural areas of Bangladesh, who often face significant academic pressure.
+
+**Q2: Who is the highly specific target user?**
+**Answer:** Bangladeshi rural high school students.
+
+**Q3: What similar apps or current solutions exist?**
+**Answer:**
+1.  **Local Professional Apps (e.g., Relaxy, Moner Bondhu):** Offer paid counseling and therapy booking in Bengali, often relying on heavier, data-intensive mobile apps.
+2.  **Global Self-Help Apps (e.g., Calm, Headspace, Wysa):** Primarily in English, designed for a global, higher-income audience, and require better internet/device resources.
+3.  **Academic Screening (GAD-7/PHQ-9 Forms):** Simple, paper-based or basic digital questionnaires that provide a score but no immediate, integrated self-help or behavioral analysis.
+
+**Q4: What is the Unique Selling Proposition (USP) of your AI-Powered Web App?**
+**Answer:** The app is the only free, low-bandwidth, Bengali-first web application that provides anonymous, AI-driven anxiety screening and immediate, localized self-help support specifically for rural high school students in Bangladesh.
+
+**Q5: What is the core technology used for the anxiety detection?**
+**Answer:** A hybrid Machine Learning (ML) system.
+* [cite_start]**Clinical Foundation:** The **Generalized Anxiety Disorder Scale (GAD-7)** is used for predefined questions[cite: 61, 92, 140].
+* [cite_start]**Data Inputs:** The ML model processes **survey responses** and **behavioral data** (such as response speed and interaction patterns)[cite: 34, 63, 144].
+* [cite_start]**Classification Models:** A supervised ML model, specifically **Logistic Regression** or **Random Forest**, is used to classify anxiety levels[cite: 36, 81, 145].
+* [cite_start]**Output:** Classification into **Low, Moderate, or High** anxiety, followed by personalized feedback[cite: 65, 67, 68, 69, 145].
+
+**Q6: What is the primary technology stack required for the front-end and back-end?**
+**Answer:**
+* [cite_start]**Platform:** Web Application[cite: 76].
+* [cite_start]**Backend:** Python (Flask or Django)[cite: 77, 125].
+* [cite_start]**ML Libraries:** Scikit-learn, Pandas, NumPy[cite: 129].
+* [cite_start]**Frontend:** HTML, CSS, JavaScript (React or Next.js)[cite: 78, 125].
+* [cite_start]**UI/Design:** Tailwind CSS, responsive layout[cite: 84, 109, 269].
+* [cite_start]**Database:** PostgreSQL or Firebase / Supabase[cite: 79, 128].
+
+**Q7: How is the data processed to generate the anxiety prediction?**
+**Answer:**
+1.  [cite_start]**Inputs:** Student completes the GAD-7 survey (0-3 scale) while the system tracks their response times and interaction behaviors[cite: 61, 63, 141, 144].
+2.  [cite_start]**Processing:** The integrated data (survey score + behavioral metrics) is fed into the ML model (Logistic Regression/Random Forest)[cite: 81, 144].
+3.  [cite_start]**Output:** The model classifies the student's state as Low, Moderate, or High anxiety[cite: 65, 145].
+4.  [cite_start]**Feedback:** Personalized, immediate support messages are displayed based on the classification[cite: 67, 68, 69, 149].
+
+**Q8: What are the key technical and non-functional requirements that will ensure rural students in Bangladesh can actually use the app effectively?**
+**Answer:**
+* [cite_start]**Performance:** Must load within **3 seconds on a 3G connection**[cite: 157].
+* [cite_start]**Budget:** Must operate using **free-tier tools** (e.g., Vercel, Firebase)[cite: 170].
+* [cite_start]**Usability:** Simple, clear UI with minimal text[cite: 161].
+* [cite_start]**Portability:** Works on both desktop and mobile browsers[cite: 166].
+* [cite_start]**Security:** Data must be encrypted and fully **anonymized** to address stigma[cite: 85, 159].
