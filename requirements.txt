@@ -1,1 +1,5 @@
-# No external dependencies needed - using Python standard library only
+flask
+scikit-learn
+pandas
+numpy
+joblib

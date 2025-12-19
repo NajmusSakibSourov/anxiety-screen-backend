@@ -1,502 +1,420 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnxietyScreen - মানসিক স্বাস্থ্য পরীক্ষা</title>
+    <title>AnxietyScreen Chatbot</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --bg-color: #f4f7f6;
+            --chat-bg: #ffffff;
+            --user-msg-bg: #667eea;
+            --bot-msg-bg: #e9ecef;
+            --text-color: #333;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            background-color: var(--bg-color);
+            margin: 0;
             display: flex;
-            align-items: center;
             justify-content: center;
-            padding: 20px;
+            height: 100vh;
         }
-        
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            padding: 40px;
-            max-width: 600px;
+
+        .chat-container {
             width: 100%;
-        }
-        
-        h1 {
-            color: #667eea;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-        
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-        
-        .question {
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .question-text {
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
-        
-        .options {
+            max-width: 480px;
+            background: var(--chat-bg);
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            height: 100%;
         }
-        
-        .option {
-            flex: 1;
-            min-width: 120px;
-        }
-        
-        .option input[type="radio"] {
-            display: none;
-        }
-        
-        .option label {
-            display: block;
-            padding: 12px;
-            background: #f5f5f5;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 15px;
             text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .lang-switch {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bot-message {
+            background-color: var(--bot-msg-bg);
+            color: var(--text-color);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .user-message {
+            background-color: var(--user-msg-bg);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .input-area {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            background: white;
+        }
+
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .option-btn {
+            background: white;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
             font-size: 14px;
         }
-        
-        .option input[type="radio"]:checked + label {
-            background: #667eea;
+
+        .option-btn:hover {
+            background: var(--primary-color);
             color: white;
-            border-color: #667eea;
-            transform: scale(1.05);
         }
-        
-        .option label:hover {
-            border-color: #667eea;
-        }
-        
-        .submit-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: transform 0.2s;
-        }
-        
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        .submit-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .result {
+
+        .hidden {
             display: none;
-            margin-top: 30px;
-            padding: 30px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            text-align: center;
         }
-        
-        .result.show {
-            display: block;
-            animation: fadeIn 0.5s;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .score {
-            font-size: 48px;
-            font-weight: bold;
-            color: #667eea;
-            margin: 20px 0;
-        }
-        
-        .classification {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        
-        .classification.low { color: #28a745; }
-        .classification.moderate { color: #ffc107; }
-        .classification.high { color: #dc3545; }
-        
-        .advice {
+
+        /* Result Styles */
+        .result-card {
             background: white;
             padding: 20px;
             border-radius: 10px;
-            margin-top: 20px;
-            text-align: left;
-        }
-        
-        .retry-btn {
-            margin-top: 20px;
-            padding: 12px 30px;
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .retry-btn:hover {
-            background: #667eea;
-            color: white;
-        }
-        
-        .loading {
-            display: none;
             text-align: center;
-            margin-top: 20px;
+            margin-top: 10px;
+            border: 1px solid #eee;
         }
-        
-        .loading.show {
-            display: block;
+
+        .low-anxiety {
+            border-left: 5px solid #28a745;
         }
-        
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+
+        .moderate-anxiety {
+            border-left: 5px solid #ffc107;
+        }
+
+        .high-anxiety {
+            border-left: 5px solid #dc3545;
+        }
+
+        .breathing-circle {
+            width: 100px;
+            height: 100px;
+            background: #a5d6a7;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
+            margin: 20px auto;
+            animation: breathe 4s infinite ease-in-out;
         }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                transform: scale(1);
             }
-            
-            .options {
-                flex-direction: column;
-            }
-            
-            .option {
-                min-width: 100%;
+
+            50% {
+                transform: scale(1.5);
             }
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>AnxietyScreen</h1>
-        <p class="subtitle">বিনামূল্যে, ব্যক্তিগত মানসিক স্বাস্থ্য পরীক্ষা</p>
-        
-        <form id="gad7Form">
-            <div class="question">
-                <div class="question-text">১. গত দুই সপ্তাহে, আপনি কতবার নার্ভাস, উদ্বিগ্ন বা সীমায় অনুভব করেছেন?</div>
-                <div class="options">
-                    <div class="option">
-                        <input type="radio" id="q1_0" name="q1" value="0" required>
-                        <label for="q1_0">একদম না</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q1_1" name="q1" value="1">
-                        <label for="q1_1">কয়েক দিন</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q1_2" name="q1" value="2">
-                        <label for="q1_2">অর্ধেকের বেশি দিন</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q1_3" name="q1" value="3">
-                        <label for="q1_3">প্রায় প্রতিদিন</label>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question">
-                <div class="question-text">২. গত দুই সপ্তাহে, আপনি কতবার চিন্তা নিয়ন্ত্রণ বা বন্ধ করতে অক্ষম ছিলেন?</div>
-                <div class="options">
-                    <div class="option">
-                        <input type="radio" id="q2_0" name="q2" value="0" required>
-                        <label for="q2_0">একদম না</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q2_1" name="q2" value="1">
-                        <label for="q2_1">কয়েক দিন</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q2_2" name="q2" value="2">
-                        <label for="q2_2">অর্ধেকের বেশি দিন</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q2_3" name="q2" value="3">
-                        <label for="q2_3">প্রায় প্রতিদিন</label>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question">
-                <div class="question-text">৩. গত দুই সপ্তাহে, আপনি কতবার বিভিন্ন বিষয় নিয়ে খুব বেশি চিন্তা করেছেন?</div>
-                <div class="options">
-                    <div class="option">
-                        <input type="radio" id="q3_0" name="q3" value="0" required>
-                        <label for="q3_0">একদম না</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q3_1" name="q3" value="1">
-                        <label for="q3_1">কয়েক দিন</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q3_2" name="q3" value="2">
-                        <label for="q3_2">অর্ধেকের বেশি দিন</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q3_3" name="q3" value="3">
-                        <label for="q3_3">প্রায় প্রতিদিন</label>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question">
-                <div class="question-text">৪. গত দুই সপ্তাহে, আপনি কতবার শান্ত হতে সমস্যা হয়েছে?</div>
-                <div class="options">
-                    <div class="option">
-                        <input type="radio" id="q4_0" name="q4" value="0" required>
-                        <label for="q4_0">একদম না</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q4_1" name="q4" value="1">
-                        <label for="q4_1">কয়েক দিন</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q4_2" name="q4" value="2">
-                        <label for="q4_2">অর্ধেকের বেশি দিন</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q4_3" name="q4" value="3">
-                        <label for="q4_3">প্রায় প্রতিদিন</label>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question">
-                <div class="question-text">৫. গত দুই সপ্তাহে, আপনি কতবার এত অস্থির ছিলেন যে স্থির থাকা কঠিন ছিল?</div>
-                <div class="options">
-                    <div class="option">
-                        <input type="radio" id="q5_0" name="q5" value="0" required>
-                        <label for="q5_0">একদম না</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q5_1" name="q5" value="1">
-                        <label for="q5_1">কয়েক দিন</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q5_2" name="q5" value="2">
-                        <label for="q5_2">অর্ধেকের বেশি দিন</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q5_3" name="q5" value="3">
-                        <label for="q5_3">প্রায় প্রতিদিন</label>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question">
-                <div class="question-text">৬. গত দুই সপ্তাহে, আপনি কতবার সহজেই বিরক্ত বা খিটখিটে হয়েছেন?</div>
-                <div class="options">
-                    <div class="option">
-                        <input type="radio" id="q6_0" name="q6" value="0" required>
-                        <label for="q6_0">একদম না</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q6_1" name="q6" value="1">
-                        <label for="q6_1">কয়েক দিন</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q6_2" name="q6" value="2">
-                        <label for="q6_2">অর্ধেকের বেশি দিন</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q6_3" name="q6" value="3">
-                        <label for="q6_3">প্রায় প্রতিদিন</label>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question">
-                <div class="question-text">৭. গত দুই সপ্তাহে, আপনি কতবার ভয়ানক কিছু ঘটতে পারে এই ভয় অনুভব করেছেন?</div>
-                <div class="options">
-                    <div class="option">
-                        <input type="radio" id="q7_0" name="q7" value="0" required>
-                        <label for="q7_0">একদম না</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q7_1" name="q7" value="1">
-                        <label for="q7_1">কয়েক দিন</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q7_2" name="q7" value="2">
-                        <label for="q7_2">অর্ধেকের বেশি দিন</label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" id="q7_3" name="q7" value="3">
-                        <label for="q7_3">প্রায় প্রতিদিন</label>
-                    </div>
-                </div>
-            </div>
-            
-            <button type="submit" class="submit-btn">ফলাফল দেখুন</button>
-        </form>
-        
-        <div class="loading">
-            <div class="spinner"></div>
-            <p style="margin-top: 15px; color: #666;">বিশ্লেষণ করা হচ্ছে...</p>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <h3 id="app-title">AnxietyScreen</h3>
+            <button class="lang-switch" onclick="toggleLanguage()">EN / BN</button>
         </div>
-        
-        <div class="result" id="result">
-            <h2>আপনার ফলাফল</h2>
-            <div class="score" id="score"></div>
-            <div class="classification" id="classification"></div>
-            <div class="advice" id="advice"></div>
-            <button class="retry-btn" onclick="location.reload()">আবার পরীক্ষা করুন</button>
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will appear here -->
+        </div>
+        <div class="input-area" id="input-area">
+            <!-- Options will appear here -->
         </div>
     </div>
-    
+
     <script>
-        const startTime = Date.now();
-        const form = document.getElementById('gad7Form');
-        const loading = document.querySelector('.loading');
-        const result = document.getElementById('result');
-        
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData(form);
-            const data = {
-                q1: parseInt(formData.get('q1')),
-                q2: parseInt(formData.get('q2')),
-                q3: parseInt(formData.get('q3')),
-                q4: parseInt(formData.get('q4')),
-                q5: parseInt(formData.get('q5')),
-                q6: parseInt(formData.get('q6')),
-                q7: parseInt(formData.get('q7')),
-                response_time: Date.now() - startTime
-            };
-            
-            form.style.display = 'none';
-            loading.classList.add('show');
-            
-            try {
-                const response = await fetch('https://anxiety-screen-backend.vercel.app/api/index', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                const apiResult = await response.json();
-                
-                loading.classList.remove('show');
-                displayResult(apiResult);
-                
-            } catch (error) {
-                loading.classList.remove('show');
-                alert('দু apologies! সার্ভারের সাথে সংযোগ ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
-                form.style.display = 'block';
+        // --- Data & Config ---
+        let currentLang = 'bn'; // Default to Bengali as per PRD
+        let currentStep = 0;
+        let answers = {};
+        let startTime = Date.now();
+
+        const questions = [
+            { id: 'q1', text: { en: "Over the last 2 weeks, how often have you been feeling nervous, anxious, or on edge?", bn: "গত দুই সপ্তাহে, আপনি কতবার নার্ভাস, উদ্বিগ্ন বা সীমায় অনুভব করেছেন?" } },
+            { id: 'q2', text: { en: "Not being able to stop or control worrying?", bn: "গত দুই সপ্তাহে, আপনি কতবার চিন্তা নিয়ন্ত্রণ বা বন্ধ করতে অক্ষম ছিলেন?" } },
+            { id: 'q3', text: { en: "Worrying too much about different things?", bn: "গত দুই সপ্তাহে, আপনি কতবার বিভিন্ন বিষয় নিয়ে খুব বেশি চিন্তা করেছেন?" } },
+            { id: 'q4', text: { en: "Trouble relaxing?", bn: "গত দুই সপ্তাহে, আপনি কতবার শান্ত হতে সমস্যা হয়েছে?" } },
+            { id: 'q5', text: { en: "Being so restless that it is hard to sit still?", bn: "গত দুই সপ্তাহে, আপনি কতবার এত অস্থির ছিলেন যে স্থির থাকা কঠিন ছিল?" } },
+            { id: 'q6', text: { en: "Becoming easily annoyed or irritable?", bn: "গত দুই সপ্তাহে, আপনি কতবার সহজেই বিরক্ত বা খিটখিটে হয়েছেন?" } },
+            { id: 'q7', text: { en: "Feeling afraid as if something awful might happen?", bn: "গত দুই সপ্তাহে, আপনি কতবার ভয়ানক কিছু ঘটতে পারে এই ভয় অনুভব করেছেন?" } }
+        ];
+
+        const options = [
+            { value: 0, text: { en: "Not at all", bn: "একদম না" } },
+            { value: 1, text: { en: "Several days", bn: "কয়েক দিন" } },
+            { value: 2, text: { en: "More than half the days", bn: "অর্ধেকের বেশি দিন" } },
+            { value: 3, text: { en: "Nearly every day", bn: "প্রায় প্রতিদিন" } }
+        ];
+
+        const uiText = {
+            welcome: { en: "Hello! I'm here to help you check your stress levels. It's private and free.", bn: "হ্যালো! আমি আপনার মানসিক চাপ পরীক্ষা করতে সাহায্য করতে এখানে আছি। এটি সম্পূর্ণ গোপনীয় এবং বিনামূল্যে।" },
+            startBtn: { en: "Start Check-up", bn: "পরীক্ষা শুরু করুন" },
+            processing: { en: "Analyzing your answers...", bn: "আপনার উত্তর বিশ্লেষণ করা হচ্ছে..." },
+            error: { en: "Something went wrong. Please try again.", bn: "কিছু ভুল হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।" },
+            resultTitle: { en: "Your Result", bn: "আপনার ফলাফল" },
+            low: { en: "Low Anxiety", bn: "কম উদ্বেগ" },
+            moderate: { en: "Moderate Anxiety", bn: "মাঝারি উদ্বেগ" },
+            high: { en: "High Anxiety", bn: "উচ্চ উদ্বেগ" },
+            restart: { en: "Start Again", bn: "আবার শুরু করুন" }
+        };
+
+        // --- Core Functions ---
+
+        function init() {
+            // Check for saved state (Offline Grace)
+            const savedState = localStorage.getItem('anxiety_state');
+            if (savedState) {
+                // Restore logic could go here, but for MVP we start fresh to ensure clean data
+                localStorage.removeItem('anxiety_state');
             }
-        });
-        
-        function displayResult(apiResult) {
-            const scoreEl = document.getElementById('score');
-            const classEl = document.getElementById('classification');
-            const adviceEl = document.getElementById('advice');
-            
-            scoreEl.textContent = apiResult.score + '/21';
-            
-            const classification = apiResult.classification;
-            classEl.textContent = classification === 'Low' ? 'কম উদ্বেগ' :
-                                 classification === 'Moderate' ? 'মাঝারি উদ্বেগ' : 'উচ্চ উদ্বেগ';
-            classEl.className = 'classification ' + classification.toLowerCase();
-            
-            let advice = '';
-            if (classification === 'Low') {
-                advice = `
-                    <h3 style="color: #28a745; margin-bottom: 10px;">✓ ভালো খবর!</h3>
-                    <p>আপনার উদ্বেগের মাত্রা স্বাভাবিক সীমার মধ্যে রয়েছে।</p>
-                    <p style="margin-top: 10px;"><strong>পরামর্শ:</strong></p>
-                    <ul style="margin-left: 20px; margin-top: 5px;">
-                        <li>নিয়মিত ব্যায়াম করুন</li>
-                        <li>পর্যাপ্ত ঘুমান (৭-৮ ঘণ্টা)</li>
-                        <li>পরিবার এবং বন্ধুদের সাথে সময় কাটান</li>
-                    </ul>
-                `;
-            } else if (classification === 'Moderate') {
-                advice = `
-                    <h3 style="color: #ffc107; margin-bottom: 10px;">⚠ সতর্ক থাকুন</h3>
-                    <p>আপনার উদ্বেগের মাত্রা মাঝারি। এটি নিয়ে কিছু পদক্ষেপ নেওয়া উচিত।</p>
-                    <p style="margin-top: 10px;"><strong>পরামর্শ:</strong></p>
-                    <ul style="margin-left: 20px; margin-top: 5px;">
-                        <li>শ্বাস-প্রশ্বাসের ব্যায়াম করুন</li>
-                        <li>মেডিটেশন বা যোগব্যায়াম অনুশীলন করুন</li>
-                        <li>বিশ্বস্ত কারো সাথে আপনার অনুভূতি শেয়ার করুন</li>
-                        <li>যদি সমস্যা অব্যাহত থাকে, একজন কাউন্সেলরের সাথে কথা বলুন</li>
-                    </ul>
-                `;
-            } else {
-                advice = `
-                    <h3 style="color: #dc3545; margin-bottom: 10px;">⚠ জরুরি সাহায্য প্রয়োজন</h3>
-                    <p>আপনার উদ্বেগের মাত্রা উচ্চ। অনুগ্রহ করে যত দ্রুত সম্ভব পেশাদার সাহায্য নিন।</p>
-                    <p style="margin-top: 10px;"><strong>অবিলম্বে করণীয়:</strong></p>
-                    <ul style="margin-left: 20px; margin-top: 5px;">
-                        <li>একজন মানসিক স্বাস্থ্য পেশাদারের সাথে যোগাযোগ করুন</li>
-                        <li>পরিবার বা বন্ধুদের জানান</li>
-                        <li>জরুরি হেল্পলাইন: <strong>999</strong></li>
-                        <li>কান পেতে রই: <strong>09612-166688</strong></li>
-                    </ul>
-                    <p style="margin-top: 15px; font-weight: bold; color: #dc3545;">মনে রাখবেন: সাহায্য চাওয়া শক্তির লক্ষণ!</p>
-                `;
-            }
-            
-            adviceEl.innerHTML = advice;
-            result.classList.add('show');
+
+            addBotMessage(uiText.welcome[currentLang]);
+            showOptions([{
+                text: uiText.startBtn[currentLang],
+                action: () => startSurvey()
+            }]);
         }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'bn' : 'en';
+            document.getElementById('chat-messages').innerHTML = ''; // Clear chat
+            currentStep = 0;
+            answers = {};
+            init();
+        }
+
+        function addBotMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'message bot-message';
+            div.textContent = text;
+            document.getElementById('chat-messages').appendChild(div);
+            scrollToBottom();
+        }
+
+        function addUserMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'message user-message';
+            div.textContent = text;
+            document.getElementById('chat-messages').appendChild(div);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('chat-messages');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showOptions(opts) {
+            const container = document.getElementById('input-area');
+            container.innerHTML = '';
+            const optsDiv = document.createElement('div');
+            optsDiv.className = 'options-container';
+
+            opts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt.text;
+                btn.onclick = () => {
+                    container.innerHTML = ''; // Clear options after click
+                    opt.action();
+                };
+                optsDiv.appendChild(btn);
+            });
+            container.appendChild(optsDiv);
+        }
+
+        function startSurvey() {
+            startTime = Date.now();
+            askQuestion();
+        }
+
+        function askQuestion() {
+            if (currentStep < questions.length) {
+                const q = questions[currentStep];
+                addBotMessage(q.text[currentLang]);
+
+                const currentOptions = options.map(opt => ({
+                    text: opt.text[currentLang],
+                    action: () => handleAnswer(q.id, opt.value, opt.text[currentLang])
+                }));
+
+                showOptions(currentOptions);
+            } else {
+                finishSurvey();
+            }
+        }
+
+        function handleAnswer(qId, value, text) {
+            addUserMessage(text);
+            answers[qId] = value;
+
+            // Save progress locally
+            localStorage.setItem('anxiety_state', JSON.stringify(answers));
+
+            currentStep++;
+            setTimeout(askQuestion, 500); // Small delay for natural feel
+        }
+
+        async function finishSurvey() {
+            addBotMessage(uiText.processing[currentLang]);
+
+            // Prepare payload
+            const payload = {
+                ...answers,
+                response_time: Date.now() - startTime,
+                // Mocking other features for now
+                age: 16,
+                gender: 1
+            };
+
+            try {
+                const response = await fetch('/api/assess', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                showResult(result);
+
+            } catch (e) {
+                console.error(e);
+                addBotMessage(uiText.error[currentLang]);
+                // Fallback logic for offline
+                const score = Object.values(answers).reduce((a, b) => a + b, 0);
+                let classification = 'Low';
+                if (score >= 15) classification = 'High';
+                else if (score >= 10) classification = 'Moderate';
+
+                showResult({ classification, score });
+            }
+        }
+
+        function showResult(data) {
+            const cls = data.classification;
+            let msg = '';
+            let extraHtml = '';
+
+            if (cls === 'Low') {
+                msg = currentLang === 'en' ? "Great news! Your anxiety levels seem normal." : "ভালো খবর! আপনার উদ্বেগের মাত্রা স্বাভাবিক।";
+                extraHtml = `<div class='result-card low-anxiety'><h3>${uiText.low[currentLang]}</h3><p>Keep up the good work!</p></div>`;
+            } else if (cls === 'Moderate') {
+                msg = currentLang === 'en' ? "You seem a bit stressed. Let's try a breathing exercise." : "আপনি কিছুটা চিন্তিত মনে হচ্ছেন। আসুন একটি শ্বাস-প্রশ্বাসের ব্যায়াম করি।";
+                extraHtml = `
+                <div class='result-card moderate-anxiety'>
+                    <h3>${uiText.moderate[currentLang]}</h3>
+                    <div class="breathing-circle"></div>
+                    <p>${currentLang === 'en' ? "Breathe in... Breathe out..." : "শ্বাস নিন... শ্বাস ছাড়ুন..."}</p>
+                </div>`;
+            } else {
+                msg = currentLang === 'en' ? "Your anxiety levels are high. Here are some doctors who can help." : "আপনার উদ্বেগের মাত্রা বেশি। এখানে কিছু ডাক্তার আছেন যারা সাহায্য করতে পারেন।";
+                extraHtml = `<div class='result-card high-anxiety'><h3>${uiText.high[currentLang]}</h3><div id='doctor-list'>Loading doctors...</div></div>`;
+                fetchDoctors();
+            }
+
+            addBotMessage(msg);
+            const div = document.createElement('div');
+            div.innerHTML = extraHtml;
+            document.getElementById('chat-messages').appendChild(div);
+            scrollToBottom();
+
+            showOptions([{
+                text: uiText.restart[currentLang],
+                action: () => {
+                    currentStep = 0;
+                    answers = {};
+                    document.getElementById('chat-messages').innerHTML = '';
+                    init();
+                }
+            }]);
+        }
+
+        async function fetchDoctors() {
+            try {
+                const res = await fetch('/api/doctors');
+                const doctors = await res.json();
+                const listHtml = doctors.map(d => `<p><strong>${d.name}</strong><br>${d.specialization}<br>${d.phone}</p>`).join('');
+                document.getElementById('doctor-list').innerHTML = listHtml;
+            } catch (e) {
+                document.getElementById('doctor-list').innerText = "Could not load doctors.";
+            }
+        }
+
+        // Start
+        init();
+
     </script>
+
 </body>
+
 </html>
